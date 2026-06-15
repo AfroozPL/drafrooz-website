@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  background-color: #0a0e1a;
+  color: #ffffff;
+  min-height: 100%;
+}
+
+body {
+  font-family:
+    Inter,
+    Helvetica,
+    -apple-system,
+    BlinkMacSystemFont,
+    Arial,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+@layer components {
+  .surface-card {
+    @apply rounded-xl border border-light-gray/10 bg-navy/60 backdrop-blur-sm;
+  }
+
+  .hero-grid {
+    background-image:
+      linear-gradient(rgba(184, 196, 212, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(184, 196, 212, 0.04) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, #00c2ff 0%, #7c3aed 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .accent-bar {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      #00c2ff 30%,
+      #7c3aed 70%,
+      transparent 100%
+    );
+  }
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0e1a;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(184, 196, 212, 0.15);
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 194, 255, 0.4);
+}
+
+::selection {
+  background: rgba(0, 194, 255, 0.3);
+  color: #ffffff;
+}

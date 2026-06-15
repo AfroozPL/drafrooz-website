@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "drafrooz-web",
+      "runtimeExecutable": "/bin/bash",
+      "runtimeArgs": ["dev-preview.sh"],
+      "port": 3000
+    }
+  ]
+}
