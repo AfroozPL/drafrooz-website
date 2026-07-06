@@ -139,13 +139,19 @@ export default function AboutPage() {
 
         <div className="mt-10 surface-card p-6 flex items-center justify-between flex-wrap gap-4">
           <div>
-            <p className="text-white font-bold">Full CV — coming soon</p>
+            <p className="text-white font-bold">Research Profile</p>
             <p className="text-light-gray text-sm mt-1">
-              Once uploaded, this becomes a downloadable PDF link.
+              View Dr. Afrooz&apos;s full research profile at Bond University.
             </p>
           </div>
-          <LinkButton href="/contact" variant="outline" size="sm">
-            Request a copy →
+          <LinkButton
+            href="https://research.bond.edu.au/en/persons/afrooz-purarjomandlangrudi/?_gl=1*o6th1o*_gcl_au*MTY4NTk2MzU0Ny4xNzc5MDc5MzM2*_ga*MTM3NzcyMjY0LjE3ODE2ODE1OTE.*_ga_MTEX8L3P4Q*czE3ODMzMTQ5NTEkbzckZzAkdDE3ODMzMTQ5NTQkajU3JGwwJGgw*_fplc*SHpOTDRXdXJmV1U0UlZ6djJXM2s3TDB2THZOeHhPV2c2S3NNRzcxVUV6S0I3aE9ReTEyV25MYVZrVzhzekslMkZ2dEZnVDU0VjhiakJTaSUyQnJUWFFzdm0xJTJCM1VmTTBrUEZtVWpncDhsZHNHbVlUVWlSazg2eUFrOGJSdDZ6QXZBJTNEJTNE"
+            target="_blank"
+            rel="noopener noreferrer"
+            variant="outline"
+            size="sm"
+          >
+            View Research Profile →
           </LinkButton>
         </div>
       </Section>
