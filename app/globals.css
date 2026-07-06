@@ -75,3 +75,11 @@ body {
   background: rgba(0, 194, 255, 0.3);
   color: #ffffff;
 }
+
+/* Reset inherited dark-theme color/color-scheme at the widget boundary so
+   they don't leak into its light-themed internal input (Shadow DOM doesn't
+   stop property inheritance, only rule matching). */
+elevenlabs-convai {
+  color: #000000;
+  color-scheme: light;
+}
