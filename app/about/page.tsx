@@ -46,7 +46,7 @@ export default function AboutPage() {
             <div className="lg:col-span-5">
               <div className="surface-card aspect-[4/5] relative overflow-hidden">
                 <Image
-                  src="/headshot.png"
+                  src="/headshot.jpg"
                   alt={brand.name}
                   fill
                   priority
