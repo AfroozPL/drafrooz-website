@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import Script from "next/script";
 import { SiteHeader } from "@/components/site/site-header";
 import { SiteFooter } from "@/components/site/site-footer";
 import { brand } from "@/lib/content/brand";
@@ -43,6 +44,10 @@ export default function RootLayout({
         <SiteHeader />
         <main className="flex-1">{children}</main>
         <SiteFooter />
+        <Script
+          src="https://drafrooz-chatbot.vercel.app/widget.js"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );

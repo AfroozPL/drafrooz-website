@@ -4,14 +4,15 @@
   "buildCommand": "next build",
   "devCommand": "next dev",
   "installCommand": "npm install",
+  "outputDirectory": ".next",
   "crons": [
     {
       "path": "/api/cron/cleanup-pending",
-      "schedule": "*/15 * * * *"
+      "schedule": "0 3 * * *"
     },
     {
       "path": "/api/cron/reminders",
-      "schedule": "0 */6 * * *"
+      "schedule": "0 4 * * *"
     }
   ]
 }
