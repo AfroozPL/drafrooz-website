@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import Script from "next/script";
 import { SiteHeader } from "@/components/site/site-header";
 import { SiteFooter } from "@/components/site/site-footer";
+import { ElevenLabsWidget } from "@/components/site/elevenlabs-widget";
 import { brand } from "@/lib/content/brand";
 import "./globals.css";
 
@@ -48,6 +49,7 @@ export default function RootLayout({
           src="https://drafrooz-chatbot.vercel.app/widget.js"
           strategy="afterInteractive"
         />
+        <ElevenLabsWidget />
       </body>
     </html>
   );
