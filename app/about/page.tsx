@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { Badge } from "@/components/ui/badge";
@@ -42,19 +43,16 @@ export default function AboutPage() {
               </blockquote>
             </div>
 
-            {/* Headshot placeholder */}
             <div className="lg:col-span-5">
-              <div className="surface-card aspect-[4/5] flex flex-col items-center justify-center p-8 text-center">
-                <div className="w-32 h-32 rounded-full bg-gradient-to-br from-electric-blue/20 to-deep-violet/20 border border-electric-blue/30 flex items-center justify-center mb-6">
-                  <span className="text-electric-blue text-4xl font-bold">
-                    AP
-                  </span>
-                </div>
-                <p className="text-white font-bold">Headshot placeholder</p>
-                <p className="text-muted text-xs mt-2 max-w-[200px]">
-                  Professional photo will replace this once you upload it to{" "}
-                  <code className="text-light-gray">/public/headshot.jpg</code>.
-                </p>
+              <div className="surface-card aspect-[4/5] relative overflow-hidden">
+                <Image
+                  src="/headshot.png"
+                  alt={brand.name}
+                  fill
+                  priority
+                  sizes="(min-width: 1024px) 40vw, 100vw"
+                  className="object-cover"
+                />
               </div>
             </div>
           </div>
