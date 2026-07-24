@@ -83,3 +83,10 @@ elevenlabs-convai {
   color: #000000;
   color-scheme: light;
 }
+
+/* Stack the text-chat bubble above the ElevenLabs voice widget's idle card
+   (104px tall, 32px inset) instead of both sitting in the same corner. */
+.cb-widget-bubble {
+  bottom: 152px !important;
+  right: 32px !important;
+}
