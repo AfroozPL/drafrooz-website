@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
  *
  *   checkout.session.completed / async_payment_succeeded
  *     → confirmPaidBooking (calendar event + client & owner emails)
- *   checkout.session.expired
+ *   checkout.session.expired / async_payment_failed
  *     → release the slot hold
  *
  * Confirmation is idempotent, so a non-2xx response (which makes Stripe
@@ -50,7 +50,8 @@ export async function POST(request: NextRequest) {
         await confirmPaidBooking(event.data.object);
         break;
       }
-      case "checkout.session.expired": {
+      case "checkout.session.expired":
+      case "checkout.session.async_payment_failed": {
         const bookingId = event.data.object.metadata?.booking_id;
         if (bookingId) {
           const { createSupabaseAdminClient } = await import(

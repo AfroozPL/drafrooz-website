@@ -118,14 +118,18 @@ export async function startCheckout(
 
   try {
     const { getStripe } = await import("@/lib/stripe");
+    const { formatSlotForHumans } = await import("@/lib/booking/confirm");
     const stripe = getStripe();
     const origin = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
     const fullName =
       (user.user_metadata as { full_name?: string } | null)?.full_name ?? "";
 
     const session = await stripe.checkout.sessions.create({
-      ui_mode: "embedded",
+      ui_mode: "embedded_page",
       mode: "payment",
+      // Labels these sessions in the Stripe Dashboard (8-letter suffix per
+      // Stripe's convention).
+      integration_identifier: "drafrooz-booking-kqvmtzwe",
       line_items: [
         {
           price_data: {
@@ -152,6 +156,16 @@ export async function startCheckout(
       payment_intent_data: {
         description: `${service.name} — ${slotStart.toISOString()}`,
       },
+      // Issue a paid invoice (PDF, emailed by Stripe) so business clients
+      // get a proper tax invoice, and let them add their ABN to it.
+      invoice_creation: {
+        enabled: true,
+        invoice_data: {
+          description: `${service.name} — ${formatSlotForHumans(slotStart.toISOString())}`,
+          metadata: { booking_id: booking.id },
+        },
+      },
+      tax_id_collection: { enabled: true },
       expires_at: Math.floor(Date.now() / 1000) + PAYMENT_HOLD_MINUTES * 60,
       return_url: `${origin}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
     });
