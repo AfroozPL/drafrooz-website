@@ -55,6 +55,10 @@ async function resolveOutcome(params: Awaited<Props["searchParams"]>): Promise<O
       duration: booking?.durationMinutes ?? 0,
     };
   } catch (err) {
+    // Unknown session id (mistyped or tampered URL) — nothing was paid.
+    if ((err as { code?: string }).code === "resource_missing") {
+      return { state: "unpaid" };
+    }
     console.error("[success] could not confirm session", err);
     // Payment went through (Stripe redirected here); the webhook will retry.
     return { state: "processing" };
