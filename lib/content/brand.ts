@@ -57,7 +57,7 @@ export const fallbackServices = [
       "A focused conversation to identify the highest-leverage AI initiatives in your organisation, surface hidden risks, and define what success looks like.",
     duration_minutes: 30,
     price_cents: 15000,
-    currency: "USD",
+    currency: "AUD",
     bullets: [
       "30-minute video call",
       "Diagnostic of current AI maturity",
@@ -74,7 +74,7 @@ export const fallbackServices = [
       "A deep working session for leadership teams ready to translate AI ambition into a concrete, evidence-based roadmap aligned with business priorities.",
     duration_minutes: 60,
     price_cents: 35000,
-    currency: "USD",
+    currency: "AUD",
     bullets: [
       "60-minute strategic session",
       "Roadmap aligned to business KPIs",
@@ -92,7 +92,7 @@ export const fallbackServices = [
       "An extended engagement for enterprise and healthcare teams tackling large-scale GenAI or data science initiatives. Combines research review, technical advisory, and stakeholder alignment.",
     duration_minutes: 90,
     price_cents: 60000,
-    currency: "USD",
+    currency: "AUD",
     bullets: [
       "90-minute working session",
       "Pre-session research briefing",

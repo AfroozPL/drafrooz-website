@@ -51,7 +51,7 @@ type AvailabilityData = {
  * time `now`. Prevents last-minute bookings you can't prepare for.
  */
 export function isBookableStart(slotStart: Date, now: Date): boolean {
-  const MIN_NOTICE_HOURS = 12;
+  const MIN_NOTICE_HOURS = 24;
   return slotStart.getTime() - now.getTime() >= MIN_NOTICE_HOURS * 3600_000;
 }
 

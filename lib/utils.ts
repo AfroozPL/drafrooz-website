@@ -34,7 +34,7 @@ export function safeRedirectPath(
 
 export function formatCurrency(
   amountCents: number,
-  currency: string = "USD",
+  currency: string = "AUD",
   locale: string = "en-US",
 ) {
   return new Intl.NumberFormat(locale, {
