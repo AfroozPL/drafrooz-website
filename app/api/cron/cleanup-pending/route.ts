@@ -9,8 +9,10 @@ export const dynamic = "force-dynamic";
  */
 export async function GET(request: NextRequest) {
   const auth = request.headers.get("authorization");
+  // Fail closed: without CRON_SECRET configured, nobody may run this.
+  // Vercel Cron sends "Authorization: Bearer <CRON_SECRET>" automatically.
   if (
-    process.env.CRON_SECRET &&
+    !process.env.CRON_SECRET ||
     auth !== `Bearer ${process.env.CRON_SECRET}`
   ) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

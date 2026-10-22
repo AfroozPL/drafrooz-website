@@ -33,7 +33,10 @@ export async function updateSession(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
   const protectedPrefixes = ["/book", "/dashboard", "/admin"];
-  const needsAuth = protectedPrefixes.some((p) => path.startsWith(p));
+  // Match whole segments so "/booking/success" isn't caught by "/book".
+  const needsAuth = protectedPrefixes.some(
+    (p) => path === p || path.startsWith(`${p}/`),
+  );
   if (needsAuth && !user) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
