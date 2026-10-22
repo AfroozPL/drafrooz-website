@@ -4,14 +4,29 @@ import { Container } from "@/components/ui/container";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardTitle, CardDescription } from "@/components/ui/card";
 import { LoginForm } from "@/components/auth/login-form";
+import { safeRedirectPath } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Sign in" };
 
-type Props = { searchParams: Promise<{ redirect?: string }> };
+type Props = {
+  searchParams: Promise<{ redirect?: string; notice?: string }>;
+};
+
+const NOTICES: Record<string, { tone: "mint" | "amber"; text: string }> = {
+  confirmed: {
+    tone: "mint",
+    text: "Your email is confirmed. Sign in to continue.",
+  },
+  "link-expired": {
+    tone: "amber",
+    text: "That link has expired or was already used. If you've confirmed your email, just sign in below.",
+  },
+};
 
 export default async function LoginPage({ searchParams }: Props) {
-  const { redirect } = await searchParams;
-  const redirectTo = redirect && redirect.startsWith("/") ? redirect : "/dashboard";
+  const { redirect, notice } = await searchParams;
+  const redirectTo = safeRedirectPath(redirect);
+  const banner = notice ? NOTICES[notice] : undefined;
 
   return (
     <div className="relative overflow-hidden">
@@ -28,6 +43,19 @@ export default async function LoginPage({ searchParams }: Props) {
           Sign in to manage your bookings and account.
         </p>
 
+        {banner && (
+          <div
+            role="status"
+            className={`surface-card p-4 mb-6 text-sm border-l-2 ${
+              banner.tone === "mint"
+                ? "border-vivid-mint text-white"
+                : "border-amber-gold text-light-gray"
+            }`}
+          >
+            {banner.text}
+          </div>
+        )}
+
         <Card>
           <CardTitle className="mb-6">Sign in</CardTitle>
           <LoginForm redirectTo={redirectTo} />
@@ -35,15 +63,19 @@ export default async function LoginPage({ searchParams }: Props) {
 
         <p className="text-light-gray text-sm text-center mt-6">
           New here?{" "}
-          <Link href="/signup" className="text-electric-blue hover:underline">
+          <Link
+            href={`/signup?redirect=${encodeURIComponent(redirectTo)}`}
+            className="text-electric-blue hover:underline">
             Create an account →
           </Link>
         </p>
 
-        <CardDescription className="mt-8 text-center text-xs">
-          For preview only: sign-in requires Supabase to be connected. Add your
-          keys to <code>.env.local</code> to enable real authentication.
-        </CardDescription>
+        {!process.env.NEXT_PUBLIC_SUPABASE_URL && (
+          <CardDescription className="mt-8 text-center text-xs">
+            For preview only: sign-in requires Supabase to be connected. Add
+            your keys to <code>.env.local</code> to enable real authentication.
+          </CardDescription>
+        )}
       </Container>
     </div>
   );

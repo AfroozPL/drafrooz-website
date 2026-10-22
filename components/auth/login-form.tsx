@@ -1,14 +1,12 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Input, Label } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 export function LoginForm({ redirectTo }: { redirectTo: string }) {
-  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -30,11 +28,15 @@ export function LoginForm({ redirectTo }: { redirectTo: string }) {
         password,
       });
       if (error) {
-        setError(error.message);
+        setError(
+          error.message === "Email not confirmed"
+            ? "Please confirm your email first — check your inbox (and spam folder) for the confirmation link."
+            : error.message,
+        );
         return;
       }
-      router.push(redirectTo);
-      router.refresh();
+      // Full navigation so the server sees the new session cookie immediately.
+      window.location.assign(redirectTo);
     });
   }
 

@@ -4,6 +4,7 @@ import { Container } from "@/components/ui/container";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardTitle, CardDescription } from "@/components/ui/card";
 import { SignupForm } from "@/components/auth/signup-form";
+import { safeRedirectPath } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Create account" };
 
@@ -11,7 +12,7 @@ type Props = { searchParams: Promise<{ redirect?: string }> };
 
 export default async function SignupPage({ searchParams }: Props) {
   const { redirect } = await searchParams;
-  const redirectTo = redirect && redirect.startsWith("/") ? redirect : "/dashboard";
+  const redirectTo = safeRedirectPath(redirect);
 
   return (
     <div className="relative overflow-hidden">
@@ -35,14 +36,19 @@ export default async function SignupPage({ searchParams }: Props) {
 
         <p className="text-light-gray text-sm text-center mt-6">
           Already have an account?{" "}
-          <Link href="/login" className="text-electric-blue hover:underline">
+          <Link
+            href={`/login?redirect=${encodeURIComponent(redirectTo)}`}
+            className="text-electric-blue hover:underline">
             Sign in →
           </Link>
         </p>
 
-        <CardDescription className="mt-8 text-center text-xs">
-          For preview only: account creation requires Supabase to be connected.
-        </CardDescription>
+        {!process.env.NEXT_PUBLIC_SUPABASE_URL && (
+          <CardDescription className="mt-8 text-center text-xs">
+            For preview only: account creation requires Supabase to be
+            connected.
+          </CardDescription>
+        )}
       </Container>
     </div>
   );

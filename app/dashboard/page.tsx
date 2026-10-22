@@ -6,6 +6,7 @@ import { Card, CardTitle, CardDescription } from "@/components/ui/card";
 import { LinkButton } from "@/components/ui/link-button";
 import { SignOutButton } from "@/components/auth/sign-out-button";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { formatSlotForHumans } from "@/lib/booking/confirm";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
@@ -40,6 +41,7 @@ async function safeLoadDashboard(): Promise<{
     const { data } = await supabase
       .from("bookings")
       .select("id, slot_start, slot_end, status, meet_link, service:services(name, duration_minutes)")
+      .in("status", ["paid", "confirmed", "completed"])
       .order("slot_start", { ascending: true });
 
     return {
@@ -121,7 +123,7 @@ export default async function DashboardPage() {
                       {b.service?.name ?? "Consultation"}
                     </p>
                     <p className="text-light-gray text-sm">
-                      {new Date(b.slot_start).toLocaleString()} ·{" "}
+                      {formatSlotForHumans(b.slot_start)} ·{" "}
                       {b.service?.duration_minutes ?? "—"} min
                     </p>
                   </div>

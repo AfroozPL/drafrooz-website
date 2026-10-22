@@ -7,7 +7,8 @@ type Props = {
   serviceName: string;
   slotStartHuman: string;
   durationMinutes: number;
-  meetLink: string;
+  amountPaid?: string;
+  meetLink?: string;
   notes?: string;
 };
 
@@ -16,6 +17,7 @@ export function BookingConfirmationEmail({
   serviceName,
   slotStartHuman,
   durationMinutes,
+  amountPaid,
   meetLink,
   notes,
 }: Props) {
@@ -53,26 +55,36 @@ export function BookingConfirmationEmail({
         <Text style={{ color: colors.lightGray, fontSize: 13, margin: "6px 0 0" }}>
           {slotStartHuman} · {durationMinutes} minutes
         </Text>
+        {amountPaid && (
+          <Text style={{ color: colors.lightGray, fontSize: 13, margin: "6px 0 0" }}>
+            Paid: {amountPaid}
+          </Text>
+        )}
       </Section>
 
-      <Button
-        href={meetLink}
-        style={{
-          backgroundColor: colors.electricBlue,
-          color: colors.midnight,
-          fontWeight: 700,
-          padding: "14px 22px",
-          borderRadius: 8,
-          textDecoration: "none",
-          display: "inline-block",
-        }}
-      >
-        Join Google Meet
-      </Button>
+      {meetLink ? (
+        <Button
+          href={meetLink}
+          style={{
+            backgroundColor: colors.electricBlue,
+            color: colors.midnight,
+            fontWeight: 700,
+            padding: "14px 22px",
+            borderRadius: 8,
+            textDecoration: "none",
+            display: "inline-block",
+          }}
+        >
+          Join Google Meet
+        </Button>
+      ) : (
+        <Text style={{ color: colors.lightGray, fontSize: 13, margin: 0 }}>
+          Your video-call link will be sent to you before the session.
+        </Text>
+      )}
 
       <Text style={{ color: colors.lightGray, fontSize: 12, margin: "24px 0 0" }}>
-        A calendar invite has been added to your inbox. You can reschedule or
-        cancel any time from your dashboard.
+        Need to reschedule? Simply reply to this email.
       </Text>
 
       {notes && (

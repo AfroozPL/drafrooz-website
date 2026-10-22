@@ -7,7 +7,12 @@ import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { BookingPicker } from "@/components/booking/booking-picker";
 import { getServiceBySlug } from "@/lib/services/queries";
 import { formatCurrency } from "@/lib/utils";
-import { DEFAULT_TZ, type Slot } from "@/lib/booking/availability";
+import {
+  BOOKING_WINDOW_DAYS,
+  DEFAULT_TZ,
+  type DayAvailability,
+  type Slot,
+} from "@/lib/booking/availability";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { addDays, format } from "date-fns";
 
@@ -22,13 +27,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 /**
- * Generates a demo 14-day window of slots when Supabase isn't configured —
+ * Generates a demo window of slots when Supabase isn't configured —
  * useful for previewing the booking UI before the database is wired up.
  */
-function demoAvailability(durationMinutes: number) {
-  const out: Array<{ date: string; label: string; slots: Slot[] }> = [];
+function demoAvailability(durationMinutes: number): DayAvailability[] {
+  const out: DayAvailability[] = [];
   const today = new Date();
-  for (let i = 0; i < 14; i++) {
+  for (let i = 0; i < BOOKING_WINDOW_DAYS; i++) {
     const day = addDays(today, i);
     const dow = day.getDay();
     const slots: Slot[] = [];
@@ -41,7 +46,7 @@ function demoAvailability(durationMinutes: number) {
         slots.push({
           start: slotStart.toISOString(),
           end: slotEnd.toISOString(),
-          label: `${hour.toString().padStart(2, "0")}:00`,
+          label: format(slotStart, "h:mm a"),
         });
       }
     }
@@ -54,7 +59,7 @@ function demoAvailability(durationMinutes: number) {
   return out;
 }
 
-async function loadDays(durationMinutes: number) {
+async function loadDays(durationMinutes: number): Promise<DayAvailability[]> {
   if (
     process.env.NEXT_PUBLIC_SUPABASE_URL &&
     process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -62,30 +67,30 @@ async function loadDays(durationMinutes: number) {
     try {
       const { getAvailability } = await import("@/lib/booking/availability");
       return await getAvailability({ durationMinutes });
-    } catch {
-      return demoAvailability(durationMinutes);
+    } catch (err) {
+      console.error("[book] availability failed", err);
+      return [];
     }
   }
   return demoAvailability(durationMinutes);
 }
+
+export const dynamic = "force-dynamic";
 
 export default async function BookPage({ params }: Props) {
   const { slug } = await params;
   const service = await getServiceBySlug(slug);
   if (!service) notFound();
 
-  // Soft auth gate: only enforce if Supabase is configured.
+  // Auth gate (only when Supabase is configured). redirect() works by
+  // throwing, so it must not sit inside a try/catch.
   if (process.env.NEXT_PUBLIC_SUPABASE_URL) {
-    try {
-      const supabase = await createSupabaseServerClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) {
-        redirect(`/login?redirect=/book/${slug}`);
-      }
-    } catch {
-      // No-op — surface page for preview.
+    const supabase = await createSupabaseServerClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      redirect(`/login?redirect=${encodeURIComponent(`/book/${slug}`)}`);
     }
   }
 
@@ -112,7 +117,8 @@ export default async function BookPage({ params }: Props) {
       </section>
 
       <Section>
-        {!process.env.STRIPE_SECRET_KEY && (
+        {!process.env.STRIPE_SECRET_KEY &&
+          process.env.NODE_ENV !== "production" && (
           <Card className="mb-8">
             <CardTitle className="mb-2">Preview mode</CardTitle>
             <CardDescription>
@@ -123,15 +129,15 @@ export default async function BookPage({ params }: Props) {
             </CardDescription>
           </Card>
         )}
-        <Card>
-          <BookingPicker
-            serviceSlug={service.slug}
-            serviceName={service.name}
-            days={days}
-            timezone={DEFAULT_TZ}
-            priceLabel={`${formatCurrency(service.price_cents, service.currency)} · ${service.duration_minutes} min`}
-          />
-        </Card>
+        <BookingPicker
+          serviceSlug={service.slug}
+          serviceName={service.name}
+          days={days}
+          timezone={DEFAULT_TZ}
+          priceLabel={formatCurrency(service.price_cents, service.currency)}
+          durationMinutes={service.duration_minutes}
+          publishableKey={process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? null}
+        />
       </Section>
     </>
   );

@@ -1,13 +1,11 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
 import { Input, Label } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 export function SignupForm({ redirectTo }: { redirectTo: string }) {
-  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [pending, startTransition] = useTransition();
@@ -42,8 +40,7 @@ export function SignupForm({ redirectTo }: { redirectTo: string }) {
         setSuccess(true);
         return;
       }
-      router.push(redirectTo);
-      router.refresh();
+      window.location.assign(redirectTo);
     });
   }
 
@@ -52,7 +49,9 @@ export function SignupForm({ redirectTo }: { redirectTo: string }) {
       <div className="surface-card p-6">
         <p className="text-white font-bold mb-2">Check your email.</p>
         <p className="text-light-gray text-sm">
-          We sent you a confirmation link. Click it to activate your account.
+          We sent you a confirmation link. Click it to activate your account,
+          then sign in to continue your booking. (It can take a minute — check
+          your spam folder too.)
         </p>
       </div>
     );
