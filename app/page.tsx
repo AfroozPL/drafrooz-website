@@ -5,7 +5,7 @@ import { Card, CardTitle, CardDescription } from "@/components/ui/card";
 import { LinkButton } from "@/components/ui/link-button";
 import { brand } from "@/lib/content/brand";
 import { getServices } from "@/lib/services/queries";
-import { formatCurrency } from "@/lib/utils";
+import { formatServicePrice } from "@/lib/tax";
 
 export default async function HomePage() {
   const services = await getServices();
@@ -119,7 +119,7 @@ export default async function HomePage() {
               </ul>
               <div className="flex items-center justify-between pt-4 border-t border-light-gray/10">
                 <span className="text-white font-bold text-xl">
-                  {formatCurrency(service.price_cents, service.currency)}
+                  {formatServicePrice(service.price_cents, service.currency)}
                 </span>
                 <LinkButton
                   href={`/services/${service.slug}`}

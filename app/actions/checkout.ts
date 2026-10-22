@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { getServiceBySlug } from "@/lib/services/queries";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { isGstRegistered } from "@/lib/tax";
 import {
   PAYMENT_HOLD_MINUTES,
   isSlotAvailable,
@@ -135,6 +136,8 @@ export async function startCheckout(
           price_data: {
             currency: service.currency.toLowerCase(),
             unit_amount: service.price_cents,
+            // Listed prices exclude GST; Stripe Tax adds it on top.
+            tax_behavior: "exclusive",
             product_data: {
               name: service.name,
               description: service.tagline || undefined,
@@ -166,6 +169,8 @@ export async function startCheckout(
         },
       },
       tax_id_collection: { enabled: true },
+      // Uses the account's preset tax code (Stripe → Tax → Settings).
+      ...(isGstRegistered() && { automatic_tax: { enabled: true } }),
       expires_at: Math.floor(Date.now() / 1000) + PAYMENT_HOLD_MINUTES * 60,
       return_url: `${origin}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
     });

@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardTitle, CardDescription } from "@/components/ui/card";
 import { LinkButton } from "@/components/ui/link-button";
 import { getServiceBySlug, getServices } from "@/lib/services/queries";
-import { formatCurrency } from "@/lib/utils";
+import { formatServicePrice } from "@/lib/tax";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -89,7 +89,7 @@ export default async function ServiceDetailPage({ params }: Props) {
                 Price
               </p>
               <p className="text-white font-bold text-4xl mb-2">
-                {formatCurrency(service.price_cents, service.currency)}
+                {formatServicePrice(service.price_cents, service.currency)}
               </p>
               <p className="text-light-gray text-sm mb-6">
                 One-time charge · paid securely via Stripe at booking ·

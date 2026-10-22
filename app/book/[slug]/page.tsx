@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { BookingPicker } from "@/components/booking/booking-picker";
 import { getServiceBySlug } from "@/lib/services/queries";
-import { formatCurrency } from "@/lib/utils";
+import { formatServicePrice, isGstRegistered } from "@/lib/tax";
 import {
   BOOKING_WINDOW_DAYS,
   DEFAULT_TZ,
@@ -110,7 +110,7 @@ export default async function BookPage({ params }: Props) {
           </h1>
           <p className="mt-3 text-light-gray max-w-2xl">{service.tagline}</p>
           <p className="mt-4 text-electric-blue font-bold">
-            {formatCurrency(service.price_cents, service.currency)} · paid
+            {formatServicePrice(service.price_cents, service.currency)} · paid
             securely at booking
           </p>
         </Container>
@@ -134,7 +134,8 @@ export default async function BookPage({ params }: Props) {
           serviceName={service.name}
           days={days}
           timezone={DEFAULT_TZ}
-          priceLabel={formatCurrency(service.price_cents, service.currency)}
+          priceLabel={formatServicePrice(service.price_cents, service.currency)}
+          gstAtPayment={isGstRegistered()}
           durationMinutes={service.duration_minutes}
           publishableKey={process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? null}
         />

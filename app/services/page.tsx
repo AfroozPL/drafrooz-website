@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardTitle, CardDescription } from "@/components/ui/card";
 import { LinkButton } from "@/components/ui/link-button";
 import { getServices } from "@/lib/services/queries";
-import { formatCurrency } from "@/lib/utils";
+import { formatServicePrice } from "@/lib/tax";
 
 export const metadata: Metadata = {
   title: "Services",
@@ -76,7 +76,7 @@ export default async function ServicesPage() {
               </ul>
               <div className="pt-4 border-t border-light-gray/10">
                 <p className="text-white font-bold text-2xl mb-4">
-                  {formatCurrency(service.price_cents, service.currency)}
+                  {formatServicePrice(service.price_cents, service.currency)}
                 </p>
                 <div className="flex gap-3">
                   <LinkButton

@@ -64,6 +64,7 @@ export function BookingPicker({
   priceLabel,
   durationMinutes,
   publishableKey,
+  gstAtPayment,
 }: {
   serviceSlug: string;
   serviceName: string;
@@ -72,6 +73,7 @@ export function BookingPicker({
   priceLabel: string;
   durationMinutes: number;
   publishableKey: string | null;
+  gstAtPayment: boolean;
 }) {
   const slotsByDate = useMemo(
     () => new Map(days.map((d) => [d.date, d.slots])),
@@ -178,9 +180,14 @@ export function BookingPicker({
         <p className="text-light-gray mt-3">Pick a date and time.</p>
       )}
       <div className="mt-4 pt-4 border-t border-light-gray/10 flex items-center justify-between">
-        <span className="text-muted">Total</span>
+        <span className="text-muted">{gstAtPayment ? "Price" : "Total"}</span>
         <span className="text-electric-blue font-bold">{priceLabel}</span>
       </div>
+      {gstAtPayment && (
+        <p className="text-muted text-xs mt-2">
+          GST is calculated and added at payment.
+        </p>
+      )}
     </div>
   );
 
