@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardTitle, CardDescription } from "@/components/ui/card";
 import { LinkButton } from "@/components/ui/link-button";
 import { brand } from "@/lib/content/brand";
+import { FreeCallBand } from "@/components/site/blocks";
+import { Reveal } from "@/components/motion/reveal";
 
 export const metadata: Metadata = {
   title: "About",
@@ -25,7 +27,7 @@ export default function AboutPage() {
           </Badge>
           <div className="grid lg:grid-cols-12 gap-12 items-start">
             <div className="lg:col-span-7">
-              <h1 className="text-4xl lg:text-5xl font-bold text-white tracking-tight text-balance leading-[1.05]">
+              <h1 className="font-display text-4xl lg:text-6xl font-semibold text-white tracking-tight text-balance leading-[1.05]">
                 {brand.name}
               </h1>
               <p className="mt-4 text-electric-blue text-lg font-medium">
@@ -44,16 +46,16 @@ export default function AboutPage() {
             </div>
 
             <div className="lg:col-span-5">
-              <div className="surface-card aspect-[4/5] relative overflow-hidden">
+              <Reveal variant="right" className="gradient-border rounded-[2rem] aspect-[4/5] relative overflow-hidden">
                 <Image
                   src="/headshot.jpg"
                   alt={brand.name}
                   fill
                   priority
                   sizes="(min-width: 1024px) 40vw, 100vw"
-                  className="object-cover"
+                  className="object-cover object-top"
                 />
-              </div>
+              </Reveal>
             </div>
           </div>
         </Container>
@@ -154,16 +156,10 @@ export default function AboutPage() {
         </div>
       </Section>
 
-      <Section eyebrow="Get in touch" title="Want to work together?">
-        <div className="flex flex-wrap gap-4">
-          <LinkButton href="/services" size="lg">
-            See consulting services
-          </LinkButton>
-          <LinkButton href="/contact" variant="outline" size="lg">
-            Send a message
-          </LinkButton>
-        </div>
-      </Section>
+      <FreeCallBand
+        eyebrow="Work together"
+        body="Start with a free 30-minute strategy call — we'll talk through your organisation, your goals and where AI can genuinely help."
+      />
     </>
   );
 }

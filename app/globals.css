@@ -6,43 +6,52 @@
   color-scheme: dark;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 html,
 body {
-  background-color: #0a0e1a;
+  background-color: #060a14;
   color: #ffffff;
   min-height: 100%;
+  /* Decorative glows/orbits may poke past the edge; never allow sideways
+     scroll. `clip` (unlike `hidden`) keeps the sticky header working. */
+  overflow-x: clip;
 }
 
 body {
-  font-family:
-    Inter,
-    Helvetica,
-    -apple-system,
-    BlinkMacSystemFont,
-    Arial,
-    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
 
+:focus-visible {
+  outline: 2px solid #00c2ff;
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
 @layer components {
   .surface-card {
-    @apply rounded-xl border border-light-gray/10 bg-navy/60 backdrop-blur-sm;
+    @apply rounded-2xl border border-white/[0.08] bg-navy/50 backdrop-blur-sm;
   }
 
   .hero-grid {
     background-image:
-      linear-gradient(rgba(184, 196, 212, 0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(184, 196, 212, 0.04) 1px, transparent 1px);
-    background-size: 32px 32px;
+      linear-gradient(rgba(184, 196, 212, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(184, 196, 212, 0.05) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse at 50% 30%, black 20%, transparent 75%);
   }
 
   .gradient-text {
-    background: linear-gradient(135deg, #00c2ff 0%, #7c3aed 100%);
+    background: linear-gradient(120deg, #00c2ff 0%, #8b5cf6 55%, #00c2ff 100%);
+    background-size: 200% 100%;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+    animation: shimmer 8s linear infinite;
   }
 
   .accent-bar {
@@ -54,6 +63,188 @@ body {
       transparent 100%
     );
   }
+
+  /* Small mono label above headings. */
+  .eyebrow {
+    @apply font-mono text-[11px] font-medium uppercase tracking-[0.22em] text-electric-blue;
+  }
+
+  /* Noise overlay keeps large gradients from banding. */
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Gradient hairline border for featured cards. */
+  .gradient-border {
+    position: relative;
+  }
+  .gradient-border::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(0, 194, 255, 0.7), rgba(124, 58, 237, 0.5) 50%, rgba(6, 255, 165, 0.4));
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* Mouse-following glow — position set by SpotlightCard via CSS vars. */
+  .spotlight {
+    position: relative;
+    isolation: isolate;
+  }
+  .spotlight::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    background: radial-gradient(
+      420px circle at var(--mx, 50%) var(--my, 50%),
+      rgba(0, 194, 255, 0.14),
+      rgba(124, 58, 237, 0.08) 40%,
+      transparent 70%
+    );
+  }
+  .spotlight:hover::after {
+    opacity: 1;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Scroll reveal. <Reveal> toggles [data-visible] as the element
+   enters and leaves the viewport, so content fades in and back out.
+   ------------------------------------------------------------------ */
+.reveal {
+  transition:
+    opacity 0.9s cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1),
+    filter 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+.reveal[data-visible="false"] {
+  opacity: 0;
+}
+.reveal[data-variant="up"][data-visible="false"] {
+  transform: translateY(48px);
+}
+.reveal[data-variant="down"][data-visible="false"] {
+  transform: translateY(-32px);
+}
+.reveal[data-variant="left"][data-visible="false"] {
+  transform: translateX(-56px);
+}
+.reveal[data-variant="right"][data-visible="false"] {
+  transform: translateX(56px);
+}
+.reveal[data-variant="scale"][data-visible="false"] {
+  transform: scale(0.92);
+}
+.reveal[data-variant="blur"][data-visible="false"] {
+  filter: blur(14px);
+  transform: translateY(16px);
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.6em);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* HITH flow diagram: particles travelling along paths (pathLength=1)
+   and pulse rings around the AI hub. */
+.hf-particle {
+  stroke-dasharray: 0.03 0.97;
+  animation: hf-flow 2.2s linear infinite;
+}
+@keyframes hf-flow {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.hf-ring {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: hf-ring 2.4s ease-out infinite;
+}
+@keyframes hf-ring {
+  from {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  to {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+
+/* Hero headline: words rise in one after another on load. */
+.word-rise > span {
+  display: inline-block;
+  animation: rise-in 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .reveal,
+  .reveal[data-visible="false"] {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* FAQ accordion */
+details.faq > summary {
+  list-style: none;
+  cursor: pointer;
+}
+details.faq > summary::-webkit-details-marker {
+  display: none;
+}
+details.faq[open] .faq-icon {
+  transform: rotate(45deg);
 }
 
 ::-webkit-scrollbar {
@@ -61,7 +252,7 @@ body {
   height: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: #0a0e1a;
+  background: #060a14;
 }
 ::-webkit-scrollbar-thumb {
   background: rgba(184, 196, 212, 0.15);

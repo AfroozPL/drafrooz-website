@@ -6,12 +6,16 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardTitle, CardDescription } from "@/components/ui/card";
 import { LinkButton } from "@/components/ui/link-button";
 import { getServiceBySlug, getServices } from "@/lib/services/queries";
+import { getPracticeArea, practiceAreas } from "@/lib/content/practice";
+import { PracticeAreaPage } from "@/components/site/practice-area-page";
 import { formatServicePrice } from "@/lib/tax";
 
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
+  const area = getPracticeArea(slug);
+  if (area) return { title: area.name, description: area.summary };
   const service = await getServiceBySlug(slug);
   if (!service) return { title: "Service not found" };
   return {
@@ -22,11 +26,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export async function generateStaticParams() {
   const services = await getServices();
-  return services.map((s) => ({ slug: s.slug }));
+  return [
+    ...practiceAreas.map((p) => ({ slug: p.slug })),
+    ...services.map((s) => ({ slug: s.slug })),
+  ];
 }
 
 export default async function ServiceDetailPage({ params }: Props) {
   const { slug } = await params;
+  const area = getPracticeArea(slug);
+  if (area) return <PracticeAreaPage area={area} />;
+
   const service = await getServiceBySlug(slug);
   if (!service) notFound();
 

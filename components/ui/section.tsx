@@ -1,6 +1,7 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Container } from "@/components/ui/container";
+import { Reveal } from "@/components/motion/reveal";
 
 interface SectionProps
   extends Omit<React.HTMLAttributes<HTMLElement>, "title"> {
@@ -21,22 +22,18 @@ export function Section({
 }: SectionProps) {
   const hasHeader = eyebrow || title || description;
   return (
-    <section className={cn("py-20 lg:py-28", className)} {...props}>
+    <section className={cn("relative py-20 lg:py-28", className)} {...props}>
       <Container>
         {hasHeader && (
-          <div
+          <Reveal
             className={cn(
               "max-w-3xl mb-12 lg:mb-16",
               align === "center" && "mx-auto text-center",
             )}
           >
-            {eyebrow && (
-              <p className="text-electric-blue text-xs font-bold tracking-[0.2em] uppercase mb-4">
-                {eyebrow}
-              </p>
-            )}
+            {eyebrow && <p className="eyebrow mb-4">{eyebrow}</p>}
             {title && (
-              <h2 className="text-3xl lg:text-4xl font-bold text-white text-balance mb-5 tracking-tight">
+              <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-semibold text-white text-balance mb-5 tracking-tight leading-[1.05]">
                 {title}
               </h2>
             )}
@@ -45,7 +42,7 @@ export function Section({
                 {description}
               </p>
             )}
-          </div>
+          </Reveal>
         )}
         {children}
       </Container>

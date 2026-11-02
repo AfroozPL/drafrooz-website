@@ -20,13 +20,13 @@ export default function ContactPage() {
           <Badge tone="blue" className="mb-6">
             Contact
           </Badge>
-          <h1 className="text-4xl lg:text-5xl font-bold text-white tracking-tight max-w-3xl text-balance leading-[1.05]">
+          <h1 className="font-display text-4xl lg:text-6xl font-semibold text-white tracking-tight max-w-3xl text-balance leading-[1.05]">
             Let's talk about your AI question.
           </h1>
           <p className="mt-5 text-lg text-light-gray max-w-2xl leading-relaxed">
-            For paid consulting, the fastest path is to{" "}
-            <a href="/services" className="text-electric-blue hover:underline">
-              book a session
+            Want to talk about AI for your business? The fastest path is a{" "}
+            <a href="/strategy-call" className="text-vivid-mint hover:underline">
+              free 30-minute strategy call
             </a>
             . For everything else — research collaboration, speaking, media —
             use the form below or email directly.
@@ -43,6 +43,17 @@ export default function ContactPage() {
             </Card>
           </div>
           <div className="lg:col-span-5 space-y-5">
+            <a
+              href="/strategy-call"
+              className="group block rounded-2xl bg-gradient-to-br from-electric-blue to-deep-violet p-6 text-ink transition hover:shadow-glow-blue"
+            >
+              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink/70">
+                Free · 30 minutes
+              </p>
+              <p className="mt-2 font-display text-xl font-semibold">
+                Book a free AI strategy call →
+              </p>
+            </a>
             <Card>
               <CardTitle className="mb-3">Email</CardTitle>
               <CardDescription>
