@@ -1,29 +1,25 @@
 import type { Metadata } from "next";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardDescription, CardTitle } from "@/components/ui/card";
+import { Inbox } from "@/components/admin/inbox";
+import { getMessages } from "@/lib/admin/data";
 
-export const metadata: Metadata = { title: "Admin · Messages" };
+export const metadata: Metadata = { title: "Admin · Inbox" };
+export const dynamic = "force-dynamic";
 
-export default function AdminMessagesPage() {
+type Props = { searchParams: Promise<{ tab?: string }> };
+
+export default async function AdminMessagesPage({ searchParams }: Props) {
+  const { tab } = await searchParams;
+  const messages = await getMessages();
+  const initialTab = tab === "strategy-call" || tab === "contact" || tab === "archived" ? tab : "all";
+
   return (
     <>
-      <h1 className="text-2xl font-bold text-white tracking-tight mb-2">
-        Messages
-      </h1>
-      <p className="text-light-gray mb-8 max-w-2xl">
-        Inbound contact form submissions, newest first.
+      <h1 className="font-display text-3xl font-semibold tracking-tight text-white">Inbox</h1>
+      <p className="mt-2 mb-8 max-w-2xl text-light-gray">
+        Free strategy call requests and contact form messages, newest first. Opening a new
+        message marks it as read.
       </p>
-      <Card>
-        <Badge tone="muted" className="mb-3">
-          No data yet
-        </Badge>
-        <CardTitle className="mb-2">Connect Supabase to see messages</CardTitle>
-        <CardDescription>
-          Contact form submissions are stored in the{" "}
-          <code>contact_messages</code> table and a notification email is sent
-          via Resend.
-        </CardDescription>
-      </Card>
+      <Inbox messages={messages} initialTab={initialTab} />
     </>
   );
 }

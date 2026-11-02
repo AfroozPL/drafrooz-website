@@ -7,6 +7,7 @@ import { LinkButton } from "@/components/ui/link-button";
 import { SignOutButton } from "@/components/auth/sign-out-button";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { formatSlotForHumans } from "@/lib/booking/confirm";
+import { isAdminUser } from "@/lib/auth/admin";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
@@ -23,6 +24,7 @@ async function safeLoadDashboard(): Promise<{
   email: string | null;
   bookings: BookingRow[];
   ready: boolean;
+  isAdmin?: boolean;
 }> {
   // If Supabase isn't configured yet, return a preview-only stub.
   if (
@@ -48,6 +50,7 @@ async function safeLoadDashboard(): Promise<{
       email,
       bookings: (data as unknown as BookingRow[]) ?? [],
       ready: true,
+      isAdmin: isAdminUser(user),
     };
   } catch {
     return { email: null, bookings: [], ready: false };
@@ -55,7 +58,7 @@ async function safeLoadDashboard(): Promise<{
 }
 
 export default async function DashboardPage() {
-  const { email, bookings, ready } = await safeLoadDashboard();
+  const { email, bookings, ready, isAdmin } = await safeLoadDashboard();
 
   return (
     <>
@@ -77,6 +80,21 @@ export default async function DashboardPage() {
             </div>
             {ready && <SignOutButton />}
           </div>
+          {isAdmin && (
+            <a
+              href="/admin"
+              className="mt-8 flex items-center justify-between gap-4 rounded-2xl bg-gradient-to-br from-electric-blue to-deep-violet p-6 text-ink transition hover:shadow-glow-blue"
+            >
+              <span>
+                <span className="block font-mono text-[11px] uppercase tracking-[0.2em] text-ink/70">
+                  Admin
+                </span>
+                <span className="mt-1 block font-display text-xl font-semibold">
+                  Open admin dashboard: inbox, bookings and contacts →
+                </span>
+              </span>
+            </a>
+          )}
         </Container>
       </section>
 

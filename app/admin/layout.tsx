@@ -1,53 +1,54 @@
-import Link from "next/link";
-import { redirect } from "next/navigation";
+import type { Metadata } from "next";
 import { Container } from "@/components/ui/container";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { AdminNav } from "@/components/admin/admin-nav";
+import { SignOutButton } from "@/components/auth/sign-out-button";
+import { requireAdmin, supabaseConfigured } from "@/lib/admin/guard";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
-const adminNav = [
-  { href: "/admin", label: "Overview" },
-  { href: "/admin/bookings", label: "Bookings" },
-  { href: "/admin/services", label: "Services" },
-  { href: "/admin/availability", label: "Availability" },
-  { href: "/admin/messages", label: "Messages" },
-  { href: "/admin/newsletter", label: "Newsletter" },
-];
+export const metadata: Metadata = {
+  title: "Admin",
+  robots: { index: false, follow: false },
+};
 
-export default async function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  // Enforce admin role only when Supabase is configured. Middleware also guards
-  // this, but we double-check here for defence in depth.
-  if (process.env.NEXT_PUBLIC_SUPABASE_URL) {
-    try {
-      const supabase = await createSupabaseServerClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      const role = (user?.app_metadata as { role?: string } | null)?.role;
-      if (!user) redirect("/login?redirect=/admin");
-      if (role !== "admin") redirect("/dashboard");
-    } catch {
-      // Surface in preview if Supabase unreachable.
-    }
-  }
+export const dynamic = "force-dynamic";
+
+async function countNewMessages() {
+  if (!supabaseConfigured()) return 0;
+  const { count } = await createSupabaseAdminClient()
+    .from("contact_messages")
+    .select("id", { count: "exact", head: true })
+    .eq("status", "new");
+  return count ?? 0;
+}
+
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  // Must run before any data loads; redirects non-admins.
+  const user = await requireAdmin();
+  const newCount = user ? await countNewMessages() : 0;
 
   return (
-    <div className="border-t border-light-gray/10">
-      <Container className="py-8">
-        <div className="flex flex-wrap gap-2 mb-8">
-          {adminNav.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="text-sm text-light-gray hover:text-white px-3 py-1.5 rounded-md border border-light-gray/10 hover:border-electric-blue/40 transition-colors"
-            >
-              {item.label}
-            </Link>
-          ))}
+    <div className="border-t border-white/[0.06]">
+      <Container className="max-w-7xl py-8 lg:py-12">
+        <div className="grid gap-8 lg:grid-cols-[220px_1fr]">
+          <aside className="lg:sticky lg:top-24 lg:self-start">
+            <p className="eyebrow mb-1">Admin</p>
+            <p className="mb-5 truncate text-sm text-muted">{user?.email ?? "Preview mode"}</p>
+            <AdminNav newCount={newCount} />
+            {user && (
+              <div className="mt-6 hidden lg:block">
+                <SignOutButton />
+              </div>
+            )}
+          </aside>
+          <div className="min-w-0">
+            {!user && (
+              <p className="mb-6 rounded-xl border border-amber-gold/30 bg-amber-gold/10 p-4 text-sm text-amber-gold">
+                Preview mode: Supabase isn&apos;t configured locally, so no live data is shown.
+              </p>
+            )}
+            {children}
+          </div>
         </div>
-        {children}
       </Container>
     </div>
   );

@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { isAdminUser } from "@/lib/auth/admin";
 import { createServerClient } from "@supabase/ssr";
 import type { Database } from "@/lib/supabase/types";
 
@@ -44,9 +45,8 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (path.startsWith("/admin") && user) {
-    const role = (user.app_metadata as { role?: string } | null)?.role;
-    if (role !== "admin") {
+  if ((path === "/admin" || path.startsWith("/admin/")) && user) {
+    if (!isAdminUser(user)) {
       const url = request.nextUrl.clone();
       url.pathname = "/dashboard";
       return NextResponse.redirect(url);
